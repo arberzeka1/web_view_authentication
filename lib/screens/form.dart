@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:web_view_authentication/constants/constants.dart';
-import 'package:web_view_authentication/helper_functions.dart';
-import 'package:web_view_authentication/main_web_view.dart';
-import 'package:web_view_authentication/network_hepler.dart';
+import 'package:web_view_authentication/helpers/helper_functions.dart';
+import 'package:web_view_authentication/helpers/network_hepler.dart';
+import 'package:web_view_authentication/screens/main_web_view.dart';
 import 'package:web_view_authentication/widgets/custom_text_field.dart';
 import 'package:web_view_authentication/widgets/main_button.dart';
 

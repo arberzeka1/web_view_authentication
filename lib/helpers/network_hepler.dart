@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-import 'constants/constants.dart';
+import '../constants/constants.dart';
 
 class NetworkHelper {
   Future<dynamic> getToken({String? username, String? password}) async {
