@@ -1,9 +1,7 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:web_view_authentication/constants/constants.dart';
-import 'package:web_view_authentication/helpers/network_hepler.dart';
-import 'package:web_view_authentication/screens/form.dart';
+import 'package:web_view_authentication/screens/loading_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewPage extends StatefulWidget {
@@ -15,65 +13,53 @@ class WebViewPage extends StatefulWidget {
 
 class _WebViewPageState extends State<WebViewPage> {
   WebViewController? webView;
+  bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Engage Media"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => WebViewPage(
-                    url: Constants().mainUrl,
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.home,
-            ),
-          ),
-        ],
       ),
       body: Column(
-        children: <Widget>[
-          Expanded(
-            child: WebView(
-              initialUrl: widget.url,
-              javascriptMode: JavascriptMode.unrestricted,
-              onWebViewCreated: (WebViewController? controller) {
-                webView = controller;
-              },
-              navigationDelegate: (NavigationRequest request) {
-                NetworkHelper()
-                    .checkStatus(url: Constants().pageUrl)
-                    .then((value) async {
-                  if (request.url == Constants().pageUrl && value == true) {
-                    final data = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => const FormScreen(),
-                      ),
-                    );
+              children: <Widget>[
+                Expanded(
+                  child: WebView(
+                    initialUrl: Constants().mainUrl,
+                    javascriptMode: JavascriptMode.unrestricted,
+                    onWebViewCreated: (WebViewController? controller) {
+                      webView = controller;
+                    },
+                    navigationDelegate: (NavigationRequest request) async {
+                      print(request.url);
+                      if (request.url.toString() == "https://demo.engagemedia.at/page" ) {
+                       Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                 LoadingScreen(url: request.url,),
+                          ),
+                        );
 
-                    if (data == null || data is! String) return;
-                    webView?.loadUrl(
-                      Uri.dataFromString(data,
-                              mimeType: 'text/html', encoding: utf8)
-                          .toString(),
-                    );
-                  }
-                });
-                return NavigationDecision.navigate;
-              },
+                      }
+
+
+                      return NavigationDecision.navigate;
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:web_view_authentication/constants/constants.dart';
 import 'package:web_view_authentication/helpers/helper_functions.dart';
 import 'package:web_view_authentication/helpers/network_hepler.dart';
+import 'package:web_view_authentication/helpers/shared_preferences.dart';
+import 'package:web_view_authentication/screens/loading_screen.dart';
 import 'package:web_view_authentication/screens/main_web_view.dart';
 import 'package:web_view_authentication/widgets/custom_text_field.dart';
 import 'package:web_view_authentication/widgets/main_button.dart';
@@ -30,30 +32,33 @@ class _FormScreenState extends State<FormScreen> {
       _isLoading = true;
     });
     try {
-      await networkHelper
-          .getToken(
-              username: _usernameController.text.trim(),
-              password: _passwordController.text.trim())
-          .then((value) async {
-        if (value == null) {
-          await helperFunctions.showAlert(
-            context,
-            'Error',
-            'Invalid Value',
-            Icons.highlight_off,
-          );
-        } else {
-          await networkHelper
-              .authenticate(token: value.toString())
-              .then((value) {
-            setState(() {
-              _isLoading = false;
-            });
-            Navigator.of(context).pop(value);
-            clearFields();
+      var token = await networkHelper.getToken(
+          username: _usernameController.text.trim(),
+          password: _passwordController.text.trim());
+
+      if (token == null) {
+        await helperFunctions.showAlert(
+          context,
+          'Error',
+          'Invalid Value',
+          Icons.highlight_off,
+        );
+      } else {
+        SharedPreference().setToken('$token');
+         var value = await networkHelper.authenticate();
+          setState(() {
+            _isLoading = false;
           });
-        }
-      });
+        await Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+               const LoadingScreen(),
+          ),
+        );
+          clearFields();
+
+      }
     } catch (error) {
       await helperFunctions.showAlert(
         context,
@@ -76,6 +81,7 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Login'),
         actions: [
           IconButton(
