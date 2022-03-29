@@ -8,7 +8,6 @@ import 'package:web_view_authentication/screens/form.dart';
 import 'package:web_view_authentication/screens/second_web_view.dart';
 
 class LoadingScreen extends StatefulWidget {
-
   final String? url;
   const LoadingScreen({Key? key, this.url}) : super(key: key);
 
@@ -17,47 +16,41 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-
+  late bool status;
   @override
   void initState() {
     checkToken();
-
     super.initState();
-  }
-  @override
-  void dispose() {
-    checkToken();
-    super.dispose();
   }
 
   void checkToken() async {
-    var status =
-    await NetworkHelper().checkStatus(url: "https://demo.engagemedia.at/page");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('action');
-    if (token != null ) {
+    await NetworkHelper()
+        .checkStatus(url: "https://demo.engagemedia.at/page")
+        .then((value) {
+      status = value;
+    });
+
+    if (token != null && status == false) {
       var date = await NetworkHelper().authenticate();
 
-      var url= Uri.dataFromString(date,
-                  mimeType: 'text/html', encoding: utf8)
-                  .toString();
+      // var url = Uri.dataFromString(date, mimeType: 'text/html', encoding: utf8)
+      //     .toString();
       await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (BuildContext context) =>
-              SecondWebViewPage(url:url.toString(),),
+              const SecondWebViewPage(url: "https://demo.engagemedia.at/pubic"),
         ),
       );
-    }
-    else if (token == null){
+    } else if (token == null || status == true) {
       await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) =>
-              const FormScreen(),
+          builder: (BuildContext context) => const FormScreen(),
         ),
       );
-
     }
   }
 
@@ -82,9 +75,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
               height: 40,
             ),
             Center(
-                child: CircularProgressIndicator(
-              color: Colors.white,
-            )),
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),

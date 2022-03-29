@@ -45,19 +45,17 @@ class _FormScreenState extends State<FormScreen> {
         );
       } else {
         SharedPreference().setToken('$token');
-         var value = await networkHelper.authenticate();
-          setState(() {
-            _isLoading = false;
-          });
+        await networkHelper.authenticate();
+        setState(() {
+          _isLoading = false;
+        });
         await Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) =>
-               const LoadingScreen(),
+            builder: (BuildContext context) => const LoadingScreen(),
           ),
         );
-          clearFields();
-
+        clearFields();
       }
     } catch (error) {
       await helperFunctions.showAlert(
@@ -110,42 +108,43 @@ class _FormScreenState extends State<FormScreen> {
             : Form(
                 key: _formKey,
                 child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Login to authenticate',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18,
-                          color: Color(0xff004252),
-                        ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Login to authenticate',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                        color: Color(0xff004252),
                       ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      TextFormFieldWidget(
-                        controller: _usernameController,
-                        hintText: 'username',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFormFieldWidget(
-                        controller: _passwordController,
-                        hintText: 'password',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      MainButton(
-                        onTap: isButtonLoading
-                            ? null
-                            : () {
-                                postRequest();
-                              },
-                        buttonTitle: "Authenticate",
-                      ),
-                    ]),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    TextFormFieldWidget(
+                      controller: _usernameController,
+                      hintText: 'username',
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextFormFieldWidget(
+                      controller: _passwordController,
+                      hintText: 'password',
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    MainButton(
+                      onTap: isButtonLoading
+                          ? null
+                          : () {
+                              postRequest();
+                            },
+                      buttonTitle: "Authenticate",
+                    ),
+                  ],
+                ),
               ),
       ),
     );

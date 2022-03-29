@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web_view_authentication/constants/constants.dart';
-import 'package:web_view_authentication/helpers/network_hepler.dart';
 import 'package:web_view_authentication/screens/form.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -18,7 +14,6 @@ class _SecondWebViewPageState extends State<SecondWebViewPage> {
   WebViewController? webView;
   bool isLoading = false;
   bool isTokenSaved = false;
-  var date;
   String? urls;
   dynamic token;
 
